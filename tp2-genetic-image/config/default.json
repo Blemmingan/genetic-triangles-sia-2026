@@ -1,0 +1,18 @@
+{
+  "population_size": 100,
+  "generations": 1000,
+  "crossover_rate": 0.8,
+  "mutation_rate": 0.1,
+  "selection_method": "elite",
+  "crossover_method": "one_point",
+  "mutation_method": "uniform",
+  "replacement_method": "exclusive",
+  "tournament_k": 3,
+  "boltzmann_temperature": 100.0,
+  "boltzmann_decay": 0.99,
+  "elite_k": 10,
+  "ranking_method": "linear",
+  "stopping_criteria": ["max_generations", "fitness_threshold"],
+  "fitness_threshold": 0.95,
+  "convergence_generations": 50
+}
