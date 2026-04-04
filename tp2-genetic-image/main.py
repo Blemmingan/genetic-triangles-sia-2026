@@ -1,5 +1,8 @@
 import argparse
 import logging
+from pathlib import Path
+from PIL import Image
+
 from utils.config_loader import load_config
 
 def main():
@@ -27,13 +30,38 @@ def main():
     # Load configuration
     config = load_config(args.config, args)
     
-    # TODO: Initialize target image
-    # TODO: Instantiate operators based on config
-    # TODO: Instantiate the GA engine
-    # TODO: engine.run()
-    # TODO: Save metrics and best generated image to outputs/
+    # Identify images to process
+    images_to_process = []
     
-    raise NotImplementedError("main logic is stubbed out and ready to be filled.")
+    if args.image:
+        images_to_process.append(Path(args.image))
+    else:
+        # Default: read all .png files in the inputs directory
+        inputs_dir = Path("inputs")
+        if inputs_dir.exists():
+            images_to_process.extend(inputs_dir.rglob("*.png"))
+    
+    if not images_to_process:
+        print("No images found to process. Please provide --image or add .png files to inputs directory.")
+        return
+        
+    for image_path in images_to_process:
+        print(f"Processing image: {image_path}")
+        try:
+            with Image.open(image_path) as img:
+                # Force loading the image data
+                img.load()
+                print(f"Successfully loaded image {image_path.name} with size {img.size}")
+                
+            # TODO: Instantiate operators based on config
+            # TODO: Instantiate the GA engine
+            # TODO: engine.run()
+            # TODO: Save metrics and best generated image to outputs/
+            
+        except Exception as e:
+            print(f"Error reading {image_path}: {e}")
+            
+    print("GA engine logic is currently stubbed out.")
 
 if __name__ == "__main__":
     main()
