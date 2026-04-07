@@ -13,5 +13,5 @@ __all__ = [
     "boltzmann",
     "tournament_deterministic",
     "tournament_probabilistic",
-    "ranking"
+    "ranking",
 ]
