@@ -1,0 +1,12 @@
+{
+    "seed": 1044,
+    "selection_method": "tournament_deterministic",
+    "crossover_method": "uniform",
+    "mutation_method": "multigen",
+    "replacement_method": "additive",
+    "best_fitness": 0.9830576833337545,
+    "stop_generation": 250,
+    "stop_reason": "Se alcanzó max_generations = 250",
+    "elapsed_seconds": 144.34756530006416,
+    "run_dir": "outputs\\experiments\\sel-tournament_deterministic__cross-uniform__mut-multigen__rep-additive__seed-1044"
+}
