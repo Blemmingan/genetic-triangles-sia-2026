@@ -43,7 +43,9 @@ class Individual:
         """
         return max(0.0, min(1.0, value))
 
-    def _sample_target_color(self, target_image: Image.Image, x: float, y: float) -> Tuple[float, float, float]:
+    def _sample_target_color(
+        self, target_image: Image.Image, x: float, y: float
+    ) -> Tuple[float, float, float]:
         """
         Toma el color RGB de la imagen objetivo en la posición normalizada (x, y).
 
@@ -159,8 +161,7 @@ class Individual:
         Devuelve una copia profunda del individuo.
         """
         new_individual = Individual(
-            num_triangles=self.num_triangles,
-            chromosome=deepcopy(self.chromosome)
+            num_triangles=self.num_triangles, chromosome=deepcopy(self.chromosome)
         )
         new_individual.fitness = self.fitness
         return new_individual

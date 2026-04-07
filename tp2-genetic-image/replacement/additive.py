@@ -1,7 +1,9 @@
-from typing import List, Any
+from typing import Any, List
 
 
-def replace(parents: List[Any], children: List[Any], fitness_fn: Any, **kwargs) -> List[Any]:
+def replace(
+    parents: List[Any], children: List[Any], fitness_fn: Any, **kwargs
+) -> List[Any]:
     """
     En supervivencia aditiva, la nueva generación NO se forma solamente
     con los hijos, sino con un pool combinado:
@@ -51,25 +53,20 @@ def replace(parents: List[Any], children: List[Any], fitness_fn: Any, **kwargs) 
     Esto es simple, robusto y muy fácil de justificar.
     """
 
-
     #  Leer tamaño objetivo de la población siguiente
     population_size = kwargs.get("population_size", len(parents))
 
     if population_size <= 0:
         raise ValueError("population_size debe ser mayor que 0.")
 
-
     # Validar que exista al menos algún individuo en el pool
 
     if not parents and not children:
-        raise ValueError(
-            "No hay padres ni hijos para construir la nueva generación."
-        )
+        raise ValueError("No hay padres ni hijos para construir la nueva generación.")
 
     # Armar el pool combinado
     # En supervivencia aditiva, ambos grupos compiten juntos.
     pooled_individuals = list(parents) + list(children)
-
 
     # Evaluar fitness si hace falta
     # Algunos padres pueden ya venir evaluados.
@@ -79,15 +76,9 @@ def replace(parents: List[Any], children: List[Any], fitness_fn: Any, **kwargs) 
         if individual.fitness is None:
             individual.fitness = fitness_fn(individual)
 
-
     # Ordenar todo el pool por fitness descendente
-    sorted_pool = sorted(
-        pooled_individuals,
-        key=lambda ind: ind.fitness,
-        reverse=True
-    )
+    sorted_pool = sorted(pooled_individuals, key=lambda ind: ind.fitness, reverse=True)
 
-    
     # Tomar los mejores 'population_size'
     # Si el pool total es menor que population_size, lanzamos error
     # porque no hay suficientes individuos para llenar la población.
@@ -100,8 +91,7 @@ def replace(parents: List[Any], children: List[Any], fitness_fn: Any, **kwargs) 
 
     # Devolvemos copias para evitar aliasing accidental.
     next_generation = [
-        individual.copy()
-        for individual in sorted_pool[:population_size]
+        individual.copy() for individual in sorted_pool[:population_size]
     ]
 
     return next_generation

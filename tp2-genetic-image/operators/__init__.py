@@ -1,5 +1,3 @@
-from . import selection
-from . import crossover
-from . import mutation
+from . import crossover, mutation, selection
 
 __all__ = ["selection", "crossover", "mutation"]

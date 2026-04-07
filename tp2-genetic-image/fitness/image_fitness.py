@@ -1,7 +1,8 @@
 import math
+from typing import Any
+
 import numpy as np
 from PIL import Image
-from typing import Any
 
 from rendering.renderer import render
 
@@ -40,34 +41,34 @@ def rgb_to_grayscale(rgb_array: np.ndarray) -> np.ndarray:
 
 def compute_edge_map(gray_array: np.ndarray) -> np.ndarray:
     """
-    Calcula un mapa de bordes simple usando diferencias finitas.
+    Calcula un mapa de bordes robusto usando el operador de Sobel.
 
     Idea
     ----
-    Para cada píxel medimos:
-    - cambio horizontal
-    - cambio vertical
-
-    Luego combinamos ambas magnitudes.
-
-    Importante:
-    como gray_array está en [0,1], las diferencias están acotadas y la
-    magnitud máxima teórica es sqrt(2). Entonces normalizamos por sqrt(2)
-    para que el resultado también quede aproximadamente en [0,1].
+    Para cada píxel medimos cambios usando kernels 3x3 para
+    las direcciones horizontal y vertical, lo que refuerza contornos
+    importantes y descarta ruido pequeño.
     """
-    # Diferencias horizontales
-    dx = np.zeros_like(gray_array, dtype=np.float32)
-    dx[:, :-1] = gray_array[:, 1:] - gray_array[:, :-1]
+    padded = np.pad(gray_array, pad_width=1, mode="edge")
 
-    # Diferencias verticales
-    dy = np.zeros_like(gray_array, dtype=np.float32)
-    dy[:-1, :] = gray_array[1:, :] - gray_array[:-1, :]
+    p_tl = padded[0:-2, 0:-2]
+    p_tc = padded[0:-2, 1:-1]
+    p_tr = padded[0:-2, 2:]
 
-    # Magnitud del gradiente
-    magnitude = np.sqrt(dx ** 2 + dy ** 2)
+    p_cl = padded[1:-1, 0:-2]
+    p_cr = padded[1:-1, 2:]
 
-    # Normalización a [0,1] aproximado
-    magnitude /= math.sqrt(2.0)
+    p_bl = padded[2:, 0:-2]
+    p_bc = padded[2:, 1:-1]
+    p_br = padded[2:, 2:]
+
+    gx = (p_tr - p_tl) + 2.0 * (p_cr - p_cl) + (p_br - p_bl)
+    gy = (p_bl - p_tl) + 2.0 * (p_bc - p_tc) + (p_br - p_tr)
+
+    magnitude = np.sqrt(gx**2 + gy**2)
+
+    # Normalización: max theoretical sobel is around 4.24
+    magnitude /= 4.0
 
     return np.clip(magnitude, 0.0, 1.0).astype(np.float32)
 
@@ -150,15 +151,12 @@ def compute_fitness(
     edge_weight = edge_weight / total_weight
 
     image_size = target_image.size
-    rendered_image = render(individual, image_size)
+    rendered_image = render(individual, image_size, target_image=target_image)
 
     color_mse = compute_color_mse(target_image, rendered_image)
     edge_mse = compute_edge_mse(target_image, rendered_image)
 
-    combined_error = (
-        color_weight * color_mse
-        + edge_weight * edge_mse
-    )
+    combined_error = color_weight * color_mse + edge_weight * edge_mse
 
     fitness = 1.0 - combined_error
     fitness = max(0.0, min(1.0, fitness))

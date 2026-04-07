@@ -1,38 +1,32 @@
 import os
-from typing import Any, Optional, Callable, List
+from typing import Any, Callable, List, Optional
+
 from PIL import Image
 
 from engine.population import Population
 from fitness.image_fitness import compute_fitness
 from metrics.tracker import MetricsTracker
-from stopping.criteria import StoppingCriteria
-
-from operators.selection.elite import select as elite_select
-from operators.selection.roulette import select as roulette_select
-from operators.selection.universal import select as universal_select
+from operators.crossover.annular import crossover as annular_crossover
+from operators.crossover.one_point import crossover as one_point_crossover
+from operators.crossover.two_point import crossover as two_point_crossover
+from operators.crossover.uniform import crossover as uniform_crossover
+from operators.mutation.gen import mutate as gen_mutate
+from operators.mutation.multigen import mutate as multigen_mutate
+from operators.mutation.non_uniform import mutate as non_uniform_mutate
 from operators.selection.boltzmann import select as boltzmann_select
+from operators.selection.elite import select as elite_select
+from operators.selection.ranking import select as ranking_select
+from operators.selection.roulette import select as roulette_select
 from operators.selection.tournament_deterministic import (
     select as tournament_deterministic_select,
 )
 from operators.selection.tournament_probabilistic import (
     select as tournament_probabilistic_select,
 )
-from operators.selection.ranking import select as ranking_select
-
-from operators.crossover.one_point import crossover as one_point_crossover
-from operators.crossover.uniform import crossover as uniform_crossover
-
-from operators.mutation.gen import mutate as gen_mutate
-from operators.mutation.multigen import mutate as multigen_mutate
-
-from replacement.exclusive import replace as exclusive_replace
+from operators.selection.universal import select as universal_select
 from replacement.additive import replace as additive_replace
-
-from operators.mutation.non_uniform import mutate as non_uniform_mutate
-
-from operators.crossover.two_point import crossover as two_point_crossover
-
-from operators.crossover.annular import crossover as annular_crossover
+from replacement.exclusive import replace as exclusive_replace
+from stopping.criteria import StoppingCriteria
 
 
 class GeneticAlgorithm:
@@ -110,8 +104,7 @@ class GeneticAlgorithm:
         self.init_color_jitter = init_color_jitter
 
         self.population = Population(
-            size=self.population_size,
-            num_triangles=self.num_triangles
+            size=self.population_size, num_triangles=self.num_triangles
         )
 
         self.best_individual: Optional[Any] = None
@@ -203,20 +196,20 @@ class GeneticAlgorithm:
 
         if self.selection_method == "tournament_deterministic":
             return selection_fn(
-                self.population,
-                n_select=n_parents,
-                tournament_k=self.tournament_k
+                self.population, n_select=n_parents, tournament_k=self.tournament_k
             )
 
         if self.selection_method == "tournament_probabilistic":
             return selection_fn(
                 self.population,
                 n_select=n_parents,
-                tournament_threshold=self.tournament_threshold
+                tournament_threshold=self.tournament_threshold,
             )
 
         if self.selection_method == "boltzmann":
-            current_generation = self.tracker.generations[-1] if self.tracker.generations else 0
+            current_generation = (
+                self.tracker.generations[-1] if self.tracker.generations else 0
+            )
             return selection_fn(
                 self.population,
                 n_select=n_parents,
@@ -226,27 +219,20 @@ class GeneticAlgorithm:
                 min_temperature=self.min_temperature,
             )
 
-        return selection_fn(
-            self.population,
-            n_select=n_parents
-        )
+        return selection_fn(self.population, n_select=n_parents)
 
     def _apply_crossover(self, parent1: Any, parent2: Any):
         crossover_fn = self._get_crossover_function()
 
         if self.crossover_method in {"one_point", "two_point"}:
-            return crossover_fn(
-                parent1,
-                parent2,
-                crossover_rate=self.crossover_rate
-            )
+            return crossover_fn(parent1, parent2, crossover_rate=self.crossover_rate)
 
         if self.crossover_method == "uniform":
             return crossover_fn(
                 parent1,
                 parent2,
                 crossover_rate=self.crossover_rate,
-                swap_probability=self.uniform_swap_probability
+                swap_probability=self.uniform_swap_probability,
             )
 
         if self.crossover_method == "annular":
@@ -258,9 +244,7 @@ class GeneticAlgorithm:
                 max_segment_length=self.annular_max_segment_length,
             )
 
-        raise ValueError(
-            f"crossover_method desconocido: {self.crossover_method}"
-        )
+        raise ValueError(f"crossover_method desconocido: {self.crossover_method}")
 
     def _mutate_child(self, child: Any) -> Any:
         if self.mutation_method == "gen":
@@ -268,7 +252,7 @@ class GeneticAlgorithm:
                 child,
                 mutation_rate=self.mutation_rate,
                 mutation_mode=self.mutation_mode,
-                sigma=self.sigma
+                sigma=self.sigma,
             )
 
         if self.mutation_method == "multigen":
@@ -278,19 +262,21 @@ class GeneticAlgorithm:
                 mutation_mode=self.mutation_mode,
                 sigma=self.sigma,
                 min_genes=self.multigen_min_genes,
-                max_genes=self.multigen_max_genes
+                max_genes=self.multigen_max_genes,
             )
 
         if self.mutation_method == "non_uniform":
-            current_generation = self.tracker.generations[-1] if self.tracker.generations else 0
+            current_generation = (
+                self.tracker.generations[-1] if self.tracker.generations else 0
+            )
 
             return non_uniform_mutate(
                 child,
                 mutation_rate=self.mutation_rate,
                 generation=current_generation,
                 max_generations=self.generations,
-                b=self.non_uniform_b
-        )
+                b=self.non_uniform_b,
+            )
 
         raise ValueError(
             f"mutation_method desconocido: {self.mutation_method}. "
@@ -328,8 +314,7 @@ class GeneticAlgorithm:
         mating_parents = self._select_parents_for_mating()
 
         children = self._create_children(
-            parents=mating_parents,
-            n_children=self.population_size
+            parents=mating_parents, n_children=self.population_size
         )
 
         replacement_fn = self._get_replacement_function()
@@ -339,13 +324,11 @@ class GeneticAlgorithm:
             parents=self.population.individuals,
             children=children,
             fitness_fn=fitness_fn,
-            population_size=self.population_size
+            population_size=self.population_size,
         )
 
         if len(next_generation) != self.population_size:
-            raise ValueError(
-                "La nueva generación no tiene el tamaño esperado."
-            )
+            raise ValueError("La nueva generación no tiene el tamaño esperado.")
 
         return next_generation
 
@@ -366,8 +349,7 @@ class GeneticAlgorithm:
             self.population.initialize_random()
         else:
             raise ValueError(
-                f"init_method desconocido: {self.init_method}. "
-                f"Usá 'random' o 'guided'."
+                f"init_method desconocido: {self.init_method}. Usá 'random' o 'guided'."
             )
 
         self.population.evaluate_all(self.target_image)
@@ -405,7 +387,9 @@ class GeneticAlgorithm:
                 f"Init: {self.init_method}"
             )
 
-            if self.stopper.should_stop(generation=generation, population=self.population):
+            if self.stopper.should_stop(
+                generation=generation, population=self.population
+            ):
                 print(f"\nEjecución detenida: {self.stopper.get_stop_reason()}")
                 break
 

@@ -1,4 +1,5 @@
 from typing import List
+
 from PIL import Image
 
 from engine.individual import Individual
@@ -62,8 +63,7 @@ class Population:
         for individual in self.individuals:
             if individual.fitness is None:
                 raise ValueError(
-                    "Hay individuos sin fitness. "
-                    "Primero debés llamar a evaluate_all()."
+                    "Hay individuos sin fitness. Primero debés llamar a evaluate_all()."
                 )
 
         return max(self.individuals, key=lambda ind: ind.fitness)
@@ -75,8 +75,7 @@ class Population:
         for individual in self.individuals:
             if individual.fitness is None:
                 raise ValueError(
-                    "Hay individuos sin fitness. "
-                    "Primero debés llamar a evaluate_all()."
+                    "Hay individuos sin fitness. Primero debés llamar a evaluate_all()."
                 )
 
         return min(self.individuals, key=lambda ind: ind.fitness)
@@ -88,8 +87,7 @@ class Population:
         for individual in self.individuals:
             if individual.fitness is None:
                 raise ValueError(
-                    "Hay individuos sin fitness. "
-                    "Primero debés llamar a evaluate_all()."
+                    "Hay individuos sin fitness. Primero debés llamar a evaluate_all()."
                 )
 
         total = sum(individual.fitness for individual in self.individuals)
@@ -102,8 +100,7 @@ class Population:
         for individual in self.individuals:
             if individual.fitness is None:
                 raise ValueError(
-                    "Hay individuos sin fitness. "
-                    "Primero debés llamar a evaluate_all()."
+                    "Hay individuos sin fitness. Primero debés llamar a evaluate_all()."
                 )
 
         return [individual.fitness for individual in self.individuals]
@@ -119,7 +116,9 @@ class Population:
 
     def copy(self) -> "Population":
         new_population = Population(size=self.size, num_triangles=self.num_triangles)
-        new_population.individuals = [individual.copy() for individual in self.individuals]
+        new_population.individuals = [
+            individual.copy() for individual in self.individuals
+        ]
         return new_population
 
     def __len__(self):

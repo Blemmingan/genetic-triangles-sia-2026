@@ -150,9 +150,7 @@ def mutate(individual: Any, **kwargs) -> Any:
 
         old_value = mutated.chromosome[triangle_idx][gene_idx]
         new_value = _mutate_scalar(
-            old_value=old_value,
-            mutation_mode=mutation_mode,
-            sigma=sigma
+            old_value=old_value, mutation_mode=mutation_mode, sigma=sigma
         )
 
         mutated.chromosome[triangle_idx][gene_idx] = new_value

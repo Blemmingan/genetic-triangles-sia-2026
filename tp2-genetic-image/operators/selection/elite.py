@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import Any, List
 
 
 def select(population: Any, n_select: int, **kwargs) -> List[Any]:
@@ -15,23 +15,19 @@ def select(population: Any, n_select: int, **kwargs) -> List[Any]:
     if not population.individuals:
         raise ValueError("La población está vacía.")
 
-   
     # Verificar que todos los individuos tengan fitness calculada
     for individual in population.individuals:
         if individual.fitness is None:
             raise ValueError(
-                "Hay individuos sin fitness. "
-                "Primero debés evaluar la población."
+                "Hay individuos sin fitness. Primero debés evaluar la población."
             )
 
     #  Ordenar individuos de mayor a menor fitness
     sorted_individuals = sorted(
-        population.individuals,
-        key=lambda ind: ind.fitness,
-        reverse=True
+        population.individuals, key=lambda ind: ind.fitness, reverse=True
     )
 
-    #Seleccionar los mejores individuos
+    # Seleccionar los mejores individuos
 
     selected = []
 

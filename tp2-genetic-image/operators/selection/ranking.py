@@ -1,5 +1,5 @@
 import random
-from typing import List, Any
+from typing import Any, List
 
 
 def select(population: Any, n_select: int, **kwargs) -> List[Any]:
@@ -36,9 +36,7 @@ def select(population: Any, n_select: int, **kwargs) -> List[Any]:
     # 1) Ordenar de mejor a peor
     # -------------------------------------------------------------
     sorted_individuals = sorted(
-        population.individuals,
-        key=lambda ind: ind.fitness,
-        reverse=True
+        population.individuals, key=lambda ind: ind.fitness, reverse=True
     )
 
     n = len(sorted_individuals)

@@ -65,7 +65,6 @@ def mutate(individual: Any, **kwargs) -> Any:
     Devolvemos una copia para evitar efectos colaterales en el flujo del GA.
     """
 
-    
     # Leer hiperparámetros de mutación
     mutation_rate = kwargs.get("mutation_rate", 0.1)
     mutation_mode = kwargs.get("mutation_mode", "reset")
@@ -79,7 +78,6 @@ def mutate(individual: Any, **kwargs) -> Any:
     if not mutated.chromosome:
         return mutated
 
-
     # Decidir si el individuo muta o no
     # Si el valor aleatorio supera mutation_rate, no se muta.
     if random.random() > mutation_rate:
@@ -92,7 +90,6 @@ def mutate(individual: Any, **kwargs) -> Any:
     # Protección adicional por si el triángulo estuviera vacío
     if not triangle:
         return mutated
-
 
     # Elegir un parámetro del triángulo al azar
     gene_idx = random.randrange(len(triangle))

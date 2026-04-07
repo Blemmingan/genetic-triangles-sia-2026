@@ -63,9 +63,7 @@ def crossover(parent1: Any, parent2: Any, **kwargs) -> Tuple[Any, Any]:
     # 2) Validaciones básicas
     # -------------------------------------------------------------
     if len(parent1.chromosome) != len(parent2.chromosome):
-        raise ValueError(
-            "Los padres no tienen la misma cantidad de triángulos."
-        )
+        raise ValueError("Los padres no tienen la misma cantidad de triángulos.")
 
     chromosome_length = len(parent1.chromosome)
 

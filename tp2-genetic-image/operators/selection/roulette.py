@@ -1,5 +1,5 @@
 import random
-from typing import List, Any
+from typing import Any, List
 
 
 def select(population: Any, n_select: int, **kwargs) -> List[Any]:
@@ -22,13 +22,10 @@ def select(population: Any, n_select: int, **kwargs) -> List[Any]:
     for individual in population.individuals:
         if individual.fitness is None:
             raise ValueError(
-                "Hay individuos sin fitness. "
-                "Primero debés evaluar la población."
+                "Hay individuos sin fitness. Primero debés evaluar la población."
             )
         if individual.fitness < 0:
-            raise ValueError(
-                "La selección por ruleta requiere fitness no negativas."
-            )
+            raise ValueError("La selección por ruleta requiere fitness no negativas.")
 
     #  Calcular la suma total de fitness
     # Esta suma se usa para obtener probabilidades relativas:
@@ -39,14 +36,13 @@ def select(population: Any, n_select: int, **kwargs) -> List[Any]:
     #  Caso especial: si la suma total es 0
     # Si todas las fitness son 0, no podemos construir probabilidades
     # proporcionales.
- 
+
     if total_fitness == 0:
         selected = []
         for _ in range(n_select):
             chosen = random.choice(population.individuals)
             selected.append(chosen.copy())
         return selected
-
 
     # Construir las probabilidades acumuladas
     cumulative_probs = []

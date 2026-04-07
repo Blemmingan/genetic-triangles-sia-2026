@@ -57,13 +57,10 @@ def crossover(parent1: Any, parent2: Any, **kwargs) -> Tuple[Any, Any]:
     child1 = parent1.copy()
     child2 = parent2.copy()
 
-
     # Validaciones básicas
 
     if len(parent1.chromosome) != len(parent2.chromosome):
-        raise ValueError(
-            "Los padres no tienen la misma cantidad de triángulos."
-        )
+        raise ValueError("Los padres no tienen la misma cantidad de triángulos.")
 
     chromosome_length = len(parent1.chromosome)
 
@@ -76,7 +73,6 @@ def crossover(parent1: Any, parent2: Any, **kwargs) -> Tuple[Any, Any]:
     if random.random() > crossover_rate:
         return child1, child2
 
-   
     # Elegir punto de corte
     # Elegimos un índice entre 1 y chromosome_length - 1.
 
@@ -85,17 +81,14 @@ def crossover(parent1: Any, parent2: Any, **kwargs) -> Tuple[Any, Any]:
     # Construir los cromosomas hijos
     # Usamos deepcopy para evitar compartir referencias internas
     # a los triángulos entre hijos y padres.
-    child1.chromosome = (
-        deepcopy(parent1.chromosome[:cut_point]) +
-        deepcopy(parent2.chromosome[cut_point:])
+    child1.chromosome = deepcopy(parent1.chromosome[:cut_point]) + deepcopy(
+        parent2.chromosome[cut_point:]
     )
 
-    child2.chromosome = (
-        deepcopy(parent2.chromosome[:cut_point]) +
-        deepcopy(parent1.chromosome[cut_point:])
+    child2.chromosome = deepcopy(parent2.chromosome[:cut_point]) + deepcopy(
+        parent1.chromosome[cut_point:]
     )
 
-    
     # Invalidar fitness
     # Como los cromosomas cambiaron, las fitness anteriores ya no valen.
     child1.fitness = None

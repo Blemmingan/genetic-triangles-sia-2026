@@ -1,5 +1,5 @@
 import random
-from typing import List, Any
+from typing import Any, List
 
 
 def select(population: Any, n_select: int, **kwargs) -> List[Any]:
@@ -51,13 +51,10 @@ def select(population: Any, n_select: int, **kwargs) -> List[Any]:
     for individual in population.individuals:
         if individual.fitness is None:
             raise ValueError(
-                "Hay individuos sin fitness. "
-                "Primero debés evaluar la población."
+                "Hay individuos sin fitness. Primero debés evaluar la población."
             )
         if individual.fitness < 0:
-            raise ValueError(
-                "La selección universal requiere fitness no negativas."
-            )
+            raise ValueError("La selección universal requiere fitness no negativas.")
 
     # -------------------------------------------------------------
     # 2) Suma total de fitness

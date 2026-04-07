@@ -1,10 +1,10 @@
-from .elite import select as elite
-from .roulette import select as roulette
-from .universal import select as universal
 from .boltzmann import select as boltzmann
+from .elite import select as elite
+from .ranking import select as ranking
+from .roulette import select as roulette
 from .tournament_deterministic import select as tournament_deterministic
 from .tournament_probabilistic import select as tournament_probabilistic
-from .ranking import select as ranking
+from .universal import select as universal
 
 __all__ = [
     "elite",

@@ -202,3 +202,49 @@ Cada run genera:
 
 ```bash
 python test_main.py --image inputs/flags/fr.png --selection-method tournament_deterministic --crossover-method uniform --mutation-method multigen --replacement-method additive --init-method guided
+```
+
+---
+
+## Resultados y Parámetros Recomendados
+
+Tras ejecutar una automatización exhaustiva comparando combinaciones sistemáticas de algoritmos en múltiples semillas y configuraciones, se obtuvieron las siguientes conclusiones:
+
+1. **Selección:** El Torneo Determinístico (`tournament_deterministic`) domina consistentemente sobre todos los demás métodos, probablemente porque mantiene una fuerte presión selectiva mientras preserva a los individuos de alta aptitud, lo que es crítico para el avance constante en un paisaje de aptitud tan amplio.
+2. **Mutación:** La Mutación No Uniforme (`non_uniform`) lidera de forma decisiva las posiciones superiores en el ranking. Al explorar de forma mucho más amplia en etapas tempranas y acotar la variación en generaciones tardías, permite que los contornos y detalles de los triángulos encajen precisamente sobre los bordes detectados en la fitness.
+3. **Crossover:** El Cruce Uniforme (`uniform`) presenta una ligera ventaja frente a `two_point` ya que dispersa mejor los canales de vértices evitando la rápida convergencia prematura local y proveyendo configuraciones de triángulos sumamente variadas a la descendencia.
+
+### Configuración Ganadora
+Basado en las estadísticas recolectadas, la configuración recomendada para optimizar la calidad de los polígonos bajo un esquema competitivo es:
+
+```bash
+python main.py \
+  --image inputs/flags/fr.png \
+  --population-size 100 \
+  --triangles 50 \
+  --generations 300 \
+  --selection tournament_deterministic \
+  --crossover uniform \
+  --mutation non_uniform \
+  --replacement exclusive
+```
+
+### Script de Experimentos Sistemáticos
+
+El proyecto cuenta con un script capaz de automatizar las búsquedas:
+
+```bash
+python run_experiments.py \
+  --image inputs/flags/fr.png \
+  --output-dir outputs/experiments/fr \
+  --image-size 64 \
+  --population-size 100 \
+  --triangles 40 \
+  --generations 200 \
+  --selection-methods tournament_deterministic,universal \
+  --crossover-methods uniform,two_point \
+  --mutation-methods multigen,non_uniform \
+  --replacement-methods additive,exclusive \
+  --repetitions 3
+```
+Esta ejecución probará todas las combinaciones (producto cartesiano) permitiendo analizar las correlaciones entre operadores en `outputs/experiments/fr/summary.json`.

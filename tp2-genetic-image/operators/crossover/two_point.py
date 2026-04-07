@@ -54,9 +54,7 @@ def crossover(parent1: Any, parent2: Any, **kwargs) -> Tuple[Any, Any]:
     # 2) Validaciones
     # -------------------------------------------------------------
     if len(parent1.chromosome) != len(parent2.chromosome):
-        raise ValueError(
-            "Los padres no tienen la misma cantidad de triángulos."
-        )
+        raise ValueError("Los padres no tienen la misma cantidad de triángulos.")
 
     chromosome_length = len(parent1.chromosome)
 
@@ -80,15 +78,15 @@ def crossover(parent1: Any, parent2: Any, **kwargs) -> Tuple[Any, Any]:
     # 5) Construir cromosomas hijos
     # -------------------------------------------------------------
     child1.chromosome = (
-        deepcopy(parent1.chromosome[:cut1]) +
-        deepcopy(parent2.chromosome[cut1:cut2]) +
-        deepcopy(parent1.chromosome[cut2:])
+        deepcopy(parent1.chromosome[:cut1])
+        + deepcopy(parent2.chromosome[cut1:cut2])
+        + deepcopy(parent1.chromosome[cut2:])
     )
 
     child2.chromosome = (
-        deepcopy(parent2.chromosome[:cut1]) +
-        deepcopy(parent1.chromosome[cut1:cut2]) +
-        deepcopy(parent2.chromosome[cut2:])
+        deepcopy(parent2.chromosome[:cut1])
+        + deepcopy(parent1.chromosome[cut1:cut2])
+        + deepcopy(parent2.chromosome[cut2:])
     )
 
     # -------------------------------------------------------------

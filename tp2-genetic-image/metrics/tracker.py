@@ -1,6 +1,7 @@
 import json
+from typing import Any, Dict, List
+
 import matplotlib.pyplot as plt
-from typing import List, Dict, Any
 
 
 class MetricsTracker:
@@ -96,12 +97,14 @@ class MetricsTracker:
         # ---------------------------------------------------------
         # 3) Guardar también en formato estructurado
         # ---------------------------------------------------------
-        self.records.append({
-            "generation": generation,
-            "best_fitness": best.fitness,
-            "avg_fitness": avg,
-            "worst_fitness": worst.fitness,
-        })
+        self.records.append(
+            {
+                "generation": generation,
+                "best_fitness": best.fitness,
+                "avg_fitness": avg,
+                "worst_fitness": worst.fitness,
+            }
+        )
 
     def save_json(self, path: str):
         """
@@ -150,8 +153,7 @@ class MetricsTracker:
         # ---------------------------------------------------------
         if not self.records:
             raise ValueError(
-                "No hay métricas registradas. "
-                "Primero debés llamar a record()."
+                "No hay métricas registradas. Primero debés llamar a record()."
             )
 
         # ---------------------------------------------------------

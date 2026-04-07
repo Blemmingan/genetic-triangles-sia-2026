@@ -1,5 +1,5 @@
 import random
-from typing import List, Any
+from typing import Any, List
 
 
 def select(population: Any, n_select: int, **kwargs) -> List[Any]:

@@ -1,7 +1,9 @@
-from typing import List, Any
+from typing import Any, List
 
 
-def replace(parents: List[Any], children: List[Any], fitness_fn: Any, **kwargs) -> List[Any]:
+def replace(
+    parents: List[Any], children: List[Any], fitness_fn: Any, **kwargs
+) -> List[Any]:
     """
     En supervivencia exclusiva, la nueva generación se construye
     únicamente a partir de los HIJOS.
@@ -53,7 +55,6 @@ def replace(parents: List[Any], children: List[Any], fitness_fn: Any, **kwargs) 
     if population_size <= 0:
         raise ValueError("population_size debe ser mayor que 0.")
 
-    
     # Validar que haya hijos
 
     if not children:
@@ -62,7 +63,6 @@ def replace(parents: List[Any], children: List[Any], fitness_fn: Any, **kwargs) 
             "La supervivencia exclusiva necesita descendencia."
         )
 
-   
     # 3) Verificar que haya suficientes hijos para reemplazar
     #    completamente a la población anterior
     if len(children) < population_size:
@@ -71,7 +71,6 @@ def replace(parents: List[Any], children: List[Any], fitness_fn: Any, **kwargs) 
             f"{population_size} hijos, pero solo llegaron {len(children)}."
         )
 
-    
     # Evaluar fitness de los hijos si hace falta
     # Si un hijo todavía no tiene fitness calculada, la evaluamos acá.
     for child in children:
@@ -79,18 +78,10 @@ def replace(parents: List[Any], children: List[Any], fitness_fn: Any, **kwargs) 
             child.fitness = fitness_fn(child)
 
     #  Ordenar hijos por fitness descendente
-    sorted_children = sorted(
-        children,
-        key=lambda ind: ind.fitness,
-        reverse=True
-    )
+    sorted_children = sorted(children, key=lambda ind: ind.fitness, reverse=True)
 
-    
     # Devolvemos copias para evitar aliasing accidental con la lista
     # original de hijos.
-    next_generation = [
-        child.copy()
-        for child in sorted_children[:population_size]
-    ]
+    next_generation = [child.copy() for child in sorted_children[:population_size]]
 
     return next_generation

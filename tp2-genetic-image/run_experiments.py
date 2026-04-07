@@ -82,7 +82,9 @@ def build_ga(target_image: Image.Image, args, config: dict) -> GeneticAlgorithm:
     )
 
 
-def run_single_experiment(target_image: Image.Image, args, config: dict, run_dir: Path, seed: int):
+def run_single_experiment(
+    target_image: Image.Image, args, config: dict, run_dir: Path, seed: int
+):
     set_global_seed(seed)
     run_dir.mkdir(parents=True, exist_ok=True)
 
@@ -95,7 +97,7 @@ def run_single_experiment(target_image: Image.Image, args, config: dict, run_dir
     best_individual = ga.run()
     elapsed = time.perf_counter() - t0
 
-    best_image = render(best_individual, target_image.size)
+    best_image = render(best_individual, target_image.size, target_image=target_image)
     best_image_path = run_dir / "best.png"
     best_image.save(best_image_path)
 
@@ -155,20 +157,38 @@ def main():
         description="Ejecuta múltiples experimentos del algoritmo genético y guarda un resumen comparativo."
     )
 
-    parser.add_argument("--image", type=str, required=True, help="Ruta de la imagen objetivo")
-    parser.add_argument("--output-dir", type=str, default="outputs/experiments", help="Carpeta base de resultados")
-    parser.add_argument("--image-size", type=int, default=32, help="Tamaño cuadrado de la imagen")
+    parser.add_argument(
+        "--image", type=str, required=True, help="Ruta de la imagen objetivo"
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        default="outputs/experiments",
+        help="Carpeta base de resultados",
+    )
+    parser.add_argument(
+        "--image-size", type=int, default=32, help="Tamaño cuadrado de la imagen"
+    )
 
     parser.add_argument("--population-size", type=int, default=120)
     parser.add_argument("--triangles", type=int, default=60)
     parser.add_argument("--generations", type=int, default=250)
 
-    parser.add_argument("--selection-methods", type=str, default="tournament_deterministic,universal,ranking")
+    parser.add_argument(
+        "--selection-methods",
+        type=str,
+        default="tournament_deterministic,universal,ranking",
+    )
     parser.add_argument("--crossover-methods", type=str, default="uniform,two_point")
     parser.add_argument("--mutation-methods", type=str, default="multigen,non_uniform")
     parser.add_argument("--replacement-methods", type=str, default="additive")
 
-    parser.add_argument("--repetitions", type=int, default=3, help="Cantidad de repeticiones por configuración")
+    parser.add_argument(
+        "--repetitions",
+        type=int,
+        default=3,
+        help="Cantidad de repeticiones por configuración",
+    )
     parser.add_argument("--base-seed", type=int, default=42, help="Seed inicial")
 
     parser.add_argument("--elite-fraction", type=float, default=0.3)
@@ -186,7 +206,9 @@ def main():
     parser.add_argument("--annular-max-segment-length", type=int, default=None)
 
     parser.add_argument("--mutation-rate", type=float, default=0.95)
-    parser.add_argument("--mutation-mode", type=str, default="delta", choices=["reset", "delta"])
+    parser.add_argument(
+        "--mutation-mode", type=str, default="delta", choices=["reset", "delta"]
+    )
     parser.add_argument("--sigma", type=float, default=0.02)
     parser.add_argument("--multigen-min-genes", type=int, default=8)
     parser.add_argument("--multigen-max-genes", type=int, default=20)
@@ -198,7 +220,9 @@ def main():
     parser.add_argument("--no-improvement-generations", type=int, default=40)
     parser.add_argument("--improvement-epsilon", type=float, default=1e-6)
 
-    parser.add_argument("--init-method", type=str, default="guided", choices=["random", "guided"])
+    parser.add_argument(
+        "--init-method", type=str, default="guided", choices=["random", "guided"]
+    )
     parser.add_argument("--init-alpha-min", type=float, default=0.2)
     parser.add_argument("--init-alpha-max", type=float, default=0.8)
     parser.add_argument("--init-triangle-size-min", type=float, default=0.05)
@@ -221,19 +245,28 @@ def main():
         else parse_csv_list(args.replacement_methods)
     )
 
-    experiment_grid = list(product(
-        selection_methods,
-        crossover_methods,
-        mutation_methods,
-        replacement_methods,
-    ))
+    experiment_grid = list(
+        product(
+            selection_methods,
+            crossover_methods,
+            mutation_methods,
+            replacement_methods,
+        )
+    )
 
     all_results = []
 
-    print(f"Se ejecutarán {len(experiment_grid)} configuraciones x {args.repetitions} repeticiones.")
+    print(
+        f"Se ejecutarán {len(experiment_grid)} configuraciones x {args.repetitions} repeticiones."
+    )
     print(f"Imagen objetivo: {args.image}")
 
-    for config_index, (selection_method, crossover_method, mutation_method, replacement_method) in enumerate(experiment_grid, start=1):
+    for config_index, (
+        selection_method,
+        crossover_method,
+        mutation_method,
+        replacement_method,
+    ) in enumerate(experiment_grid, start=1):
         config = {
             "selection_method": selection_method,
             "crossover_method": crossover_method,
@@ -279,7 +312,7 @@ def main():
     with open(output_dir / "summary.json", "w", encoding="utf-8") as f:
         json.dump(all_results, f, indent=4, ensure_ascii=False)
 
-    print("\n===== TOP 10 RESULTADOS =====")
+    print(f"\n===== TOP 10 RESULTADOS PARA {Path(args.image).name.upper()} =====")
     for idx, row in enumerate(all_results[:10], start=1):
         print(
             f"{idx:02d}. fitness={row['best_fitness']:.6f} | "

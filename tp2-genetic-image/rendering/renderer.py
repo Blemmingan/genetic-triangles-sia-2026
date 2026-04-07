@@ -1,8 +1,18 @@
+from typing import Any, Tuple
+
 from PIL import Image, ImageDraw
-from typing import Tuple, Any
 
 
-def render(individual: Any, image_size: Tuple[int, int]) -> Image.Image:
+def get_average_color(image: Image.Image) -> Tuple[int, int, int, int]:
+    if not hasattr(image, "avg_color"):
+        import numpy as np
+        arr = np.asarray(image.convert("RGB"))
+        avg = arr.mean(axis=(0,1))
+        # Cache the color inside the object directly to avoid recomputing millions of times
+        image.avg_color = (int(avg[0]), int(avg[1]), int(avg[2]), 255)
+    return image.avg_color
+
+def render(individual: Any, image_size: Tuple[int, int], target_image: Image.Image = None) -> Image.Image:
     """
     Convierte un individuo en una imagen Pillow.
 
@@ -17,8 +27,9 @@ def render(individual: Any, image_size: Tuple[int, int]) -> Image.Image:
 
     width, height = image_size
 
-    # Canvas base blanco y completamente opaco
-    canvas = Image.new("RGBA", (width, height), (255, 255, 255, 255))
+    # Dynamic average background if target_image is provided, otherwise white fallback
+    bg_color = get_average_color(target_image) if target_image else (255, 255, 255, 255)
+    canvas = Image.new("RGBA", (width, height), bg_color)
 
     for triangle in individual.chromosome:
         x1, y1, x2, y2, x3, y3, r, g, b, a = triangle

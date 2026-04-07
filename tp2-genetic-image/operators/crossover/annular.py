@@ -59,9 +59,7 @@ def crossover(parent1: Any, parent2: Any, **kwargs) -> Tuple[Any, Any]:
     # 2) Validaciones
     # -------------------------------------------------------------
     if len(parent1.chromosome) != len(parent2.chromosome):
-        raise ValueError(
-            "Los padres no tienen la misma cantidad de triángulos."
-        )
+        raise ValueError("Los padres no tienen la misma cantidad de triángulos.")
 
     chromosome_length = len(parent1.chromosome)
 
@@ -81,7 +79,9 @@ def crossover(parent1: Any, parent2: Any, **kwargs) -> Tuple[Any, Any]:
         max_segment_length = chromosome_length - 1
 
     min_segment_length = max(1, min(min_segment_length, chromosome_length - 1))
-    max_segment_length = max(min_segment_length, min(max_segment_length, chromosome_length - 1))
+    max_segment_length = max(
+        min_segment_length, min(max_segment_length, chromosome_length - 1)
+    )
 
     segment_length = random.randint(min_segment_length, max_segment_length)
 
@@ -92,8 +92,7 @@ def crossover(parent1: Any, parent2: Any, **kwargs) -> Tuple[Any, Any]:
 
     # Índices circulares a intercambiar
     segment_indices = [
-        (start_idx + offset) % chromosome_length
-        for offset in range(segment_length)
+        (start_idx + offset) % chromosome_length for offset in range(segment_length)
     ]
 
     # -------------------------------------------------------------

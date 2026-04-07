@@ -1,5 +1,6 @@
 import argparse
 import os
+
 from PIL import Image
 
 from engine.genetic_algorithm import GeneticAlgorithm
@@ -35,17 +36,29 @@ def main():
     # ---------------------------------------------------------
     # 1) Entrada / salida
     # ---------------------------------------------------------
-    parser.add_argument("--image", type=str, required=True, help="Ruta de la imagen objetivo")
+    parser.add_argument(
+        "--image", type=str, required=True, help="Ruta de la imagen objetivo"
+    )
     parser.add_argument("--image-size", type=int, default=64, help="Tamaño cuadrado")
-    parser.add_argument("--output-dir", type=str, default="outputs/ga_test", help="Carpeta de salida")
+    parser.add_argument(
+        "--output-dir", type=str, default="outputs/ga_test", help="Carpeta de salida"
+    )
 
     # ---------------------------------------------------------
     # 2) Parámetros principales del GA
     # ---------------------------------------------------------
-    parser.add_argument("--population-size", type=int, default=50, help="Cantidad de individuos")
-    parser.add_argument("--triangles", type=int, default=40, help="Cantidad de triángulos por individuo")
-    parser.add_argument("--generations", type=int, default=100, help="Cantidad máxima de generaciones")
-    parser.add_argument("--elite-fraction", type=float, default=0.3, help="Fracción usada como padres")
+    parser.add_argument(
+        "--population-size", type=int, default=50, help="Cantidad de individuos"
+    )
+    parser.add_argument(
+        "--triangles", type=int, default=40, help="Cantidad de triángulos por individuo"
+    )
+    parser.add_argument(
+        "--generations", type=int, default=100, help="Cantidad máxima de generaciones"
+    )
+    parser.add_argument(
+        "--elite-fraction", type=float, default=0.3, help="Fracción usada como padres"
+    )
 
     # ---------------------------------------------------------
     # 3) Selección
@@ -63,37 +76,34 @@ def main():
             "tournament_probabilistic",
             "ranking",
         ],
-        help="Método de selección"
+        help="Método de selección",
     )
     parser.add_argument(
-        "--tournament-k",
-        type=int,
-        default=3,
-        help="Tamaño del torneo determinístico"
+        "--tournament-k", type=int, default=3, help="Tamaño del torneo determinístico"
     )
     parser.add_argument(
         "--tournament-threshold",
         type=float,
         default=0.75,
-        help="Threshold del torneo probabilístico"
+        help="Threshold del torneo probabilístico",
     )
     parser.add_argument(
         "--boltzmann-temperature",
         type=float,
         default=100.0,
-        help="Temperatura inicial para selección Boltzmann"
+        help="Temperatura inicial para selección Boltzmann",
     )
     parser.add_argument(
         "--boltzmann-decay",
         type=float,
         default=0.99,
-        help="Factor de decaimiento de temperatura para Boltzmann"
+        help="Factor de decaimiento de temperatura para Boltzmann",
     )
     parser.add_argument(
         "--min-temperature",
         type=float,
         default=1e-3,
-        help="Temperatura mínima para Boltzmann"
+        help="Temperatura mínima para Boltzmann",
     )
 
     # ---------------------------------------------------------
@@ -104,26 +114,28 @@ def main():
         type=str,
         default="uniform",
         choices=["one_point", "two_point", "uniform", "annular"],
-        help="Método de crossover"
+        help="Método de crossover",
     )
     parser.add_argument(
         "--annular-min-segment-length",
         type=int,
         default=1,
-        help="Longitud mínima del segmento en annular crossover"
+        help="Longitud mínima del segmento en annular crossover",
     )
     parser.add_argument(
         "--annular-max-segment-length",
         type=int,
         default=None,
-        help="Longitud máxima del segmento en annular crossover"
+        help="Longitud máxima del segmento en annular crossover",
     )
-    parser.add_argument("--crossover-rate", type=float, default=0.9, help="Probabilidad de crossover")
+    parser.add_argument(
+        "--crossover-rate", type=float, default=0.9, help="Probabilidad de crossover"
+    )
     parser.add_argument(
         "--uniform-swap-probability",
         type=float,
         default=0.5,
-        help="Swap probability para uniform"
+        help="Swap probability para uniform",
     )
 
     # ---------------------------------------------------------
@@ -134,25 +146,39 @@ def main():
         type=str,
         default="multigen",
         choices=["gen", "multigen", "non_uniform"],
-        help="Método de mutación"
+        help="Método de mutación",
     )
     parser.add_argument(
         "--non-uniform-b",
         type=float,
         default=2.0,
-        help="Parámetro b de la mutación no uniforme"
+        help="Parámetro b de la mutación no uniforme",
     )
-    parser.add_argument("--mutation-rate", type=float, default=0.8, help="Probabilidad de mutación")
+    parser.add_argument(
+        "--mutation-rate", type=float, default=0.8, help="Probabilidad de mutación"
+    )
     parser.add_argument(
         "--mutation-mode",
         type=str,
         default="delta",
         choices=["reset", "delta"],
-        help="Modo de mutación"
+        help="Modo de mutación",
     )
-    parser.add_argument("--sigma", type=float, default=0.03, help="Intensidad de mutación delta")
-    parser.add_argument("--multigen-min-genes", type=int, default=3, help="Mínimo de genes a mutar en multigen")
-    parser.add_argument("--multigen-max-genes", type=int, default=12, help="Máximo de genes a mutar en multigen")
+    parser.add_argument(
+        "--sigma", type=float, default=0.03, help="Intensidad de mutación delta"
+    )
+    parser.add_argument(
+        "--multigen-min-genes",
+        type=int,
+        default=3,
+        help="Mínimo de genes a mutar en multigen",
+    )
+    parser.add_argument(
+        "--multigen-max-genes",
+        type=int,
+        default=12,
+        help="Máximo de genes a mutar en multigen",
+    )
 
     # ---------------------------------------------------------
     # 6) Replacement
@@ -162,15 +188,27 @@ def main():
         type=str,
         default="additive",
         choices=["exclusive", "additive"],
-        help="Método de replacement"
+        help="Método de replacement",
     )
 
     # ---------------------------------------------------------
     # 7) Criterios de parada
     # ---------------------------------------------------------
-    parser.add_argument("--fitness-threshold", type=float, default=None, help="Umbral de fitness")
-    parser.add_argument("--no-improvement-generations", type=int, default=20, help="Generaciones sin mejora")
-    parser.add_argument("--improvement-epsilon", type=float, default=1e-6, help="Mejora mínima significativa")
+    parser.add_argument(
+        "--fitness-threshold", type=float, default=None, help="Umbral de fitness"
+    )
+    parser.add_argument(
+        "--no-improvement-generations",
+        type=int,
+        default=20,
+        help="Generaciones sin mejora",
+    )
+    parser.add_argument(
+        "--improvement-epsilon",
+        type=float,
+        default=1e-6,
+        help="Mejora mínima significativa",
+    )
 
     # ---------------------------------------------------------
     # 8) Inicialización
@@ -180,13 +218,32 @@ def main():
         type=str,
         default="guided",
         choices=["random", "guided"],
-        help="Método de inicialización"
+        help="Método de inicialización",
     )
-    parser.add_argument("--init-alpha-min", type=float, default=0.2, help="Alpha mínimo en guided init")
-    parser.add_argument("--init-alpha-max", type=float, default=0.8, help="Alpha máximo en guided init")
-    parser.add_argument("--init-triangle-size-min", type=float, default=0.05, help="Tamaño mínimo de triángulo")
-    parser.add_argument("--init-triangle-size-max", type=float, default=0.35, help="Tamaño máximo de triángulo")
-    parser.add_argument("--init-color-jitter", type=float, default=0.05, help="Ruido agregado al color inicial")
+    parser.add_argument(
+        "--init-alpha-min", type=float, default=0.2, help="Alpha mínimo en guided init"
+    )
+    parser.add_argument(
+        "--init-alpha-max", type=float, default=0.8, help="Alpha máximo en guided init"
+    )
+    parser.add_argument(
+        "--init-triangle-size-min",
+        type=float,
+        default=0.05,
+        help="Tamaño mínimo de triángulo",
+    )
+    parser.add_argument(
+        "--init-triangle-size-max",
+        type=float,
+        default=0.35,
+        help="Tamaño máximo de triángulo",
+    )
+    parser.add_argument(
+        "--init-color-jitter",
+        type=float,
+        default=0.05,
+        help="Ruido agregado al color inicial",
+    )
 
     args = parser.parse_args()
 
@@ -260,8 +317,12 @@ def main():
     print(f"- Imagen target               : {target_output_path}")
     print(f"- Mejor imagen                : {best_image_path}")
     print(f"- Triángulos                  : {triangles_path}")
-    print(f"- Métricas JSON               : {os.path.join(args.output_dir, 'metrics.json')}")
-    print(f"- Gráfico fitness             : {os.path.join(args.output_dir, 'fitness_plot.png')}")
+    print(
+        f"- Métricas JSON               : {os.path.join(args.output_dir, 'metrics.json')}"
+    )
+    print(
+        f"- Gráfico fitness             : {os.path.join(args.output_dir, 'fitness_plot.png')}"
+    )
 
 
 if __name__ == "__main__":
