@@ -37,14 +37,14 @@ find inputs/ -type f -name "*.png" | sort | while read -r img; do
       --image "$img" \
       --output-dir "$out_dir" \
       --image-size 32 \
-      --population-size 60 \
+      --population-size 30 \
       --triangles 40 \
-      --generations 80 \
-      --selection-methods tournament_deterministic,universal \
-      --crossover-methods uniform,two_point \
-      --mutation-methods multigen,non_uniform \
+      --generations 50 \
+      --selection-methods tournament_deterministic,universal,elite,roulette,boltzmann,tournament_probabilistic,ranking \
+      --crossover-methods uniform,two_point,one_point,annular \
+      --mutation-methods multigen,non_uniform,gen \
       --replacement-methods additive,exclusive \
-      --repetitions 2
+      --repetitions 1
       
     # Extraction of the best image from the run that gave the best fitness
     # summary.json has the runs sorted by best_fitness descending, so index 0 is best

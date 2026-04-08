@@ -51,7 +51,7 @@ def main():
         "--population-size", type=int, default=50, help="Cantidad de individuos"
     )
     parser.add_argument(
-        "--triangles", type=int, default=40, help="Cantidad de triángulos por individuo"
+        "--triangles", type=int, default=100, help="Cantidad de triángulos por individuo"
     )
     parser.add_argument(
         "--generations", type=int, default=100, help="Cantidad máxima de generaciones"

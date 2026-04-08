@@ -87,7 +87,9 @@ def compute_color_mse(target_image: Image.Image, rendered_image: Image.Image) ->
     """
     Calcula MSE usando solamente RGB.
     """
-    target_rgb = image_to_array_rgb(target_image)
+    if not hasattr(target_image, 'cached_rgb'):
+        target_image.cached_rgb = image_to_array_rgb(target_image)
+    target_rgb = target_image.cached_rgb
     rendered_rgb = image_to_array_rgb(rendered_image)
     return compute_mse(target_rgb, rendered_rgb)
 
@@ -96,13 +98,16 @@ def compute_edge_mse(target_image: Image.Image, rendered_image: Image.Image) -> 
     """
     Calcula MSE entre mapas de bordes de ambas imágenes.
     """
-    target_rgb = image_to_array_rgb(target_image)
+    if not hasattr(target_image, 'cached_edges'):
+        if not hasattr(target_image, 'cached_rgb'):
+            target_image.cached_rgb = image_to_array_rgb(target_image)
+        target_gray = rgb_to_grayscale(target_image.cached_rgb)
+        target_image.cached_edges = compute_edge_map(target_gray)
+        
+    target_edges = target_image.cached_edges
+
     rendered_rgb = image_to_array_rgb(rendered_image)
-
-    target_gray = rgb_to_grayscale(target_rgb)
     rendered_gray = rgb_to_grayscale(rendered_rgb)
-
-    target_edges = compute_edge_map(target_gray)
     rendered_edges = compute_edge_map(rendered_gray)
 
     return compute_mse(target_edges, rendered_edges)

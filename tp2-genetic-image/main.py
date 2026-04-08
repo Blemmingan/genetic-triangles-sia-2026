@@ -233,9 +233,9 @@ def main():
             target_image = target_image.resize((image_size, image_size))
 
             # Cantidad de triángulos
-            num_triangles = config.get("triangles", 40)
+            num_triangles = config.get("triangles", 100)
             if num_triangles is None:
-                num_triangles = 40
+                num_triangles = 100
 
             # Carpeta de salida específica para esta imagen
             run_output_dir = Path(config.get("output_dir", "outputs")) / image_path.stem
