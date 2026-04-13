@@ -201,7 +201,7 @@ Cada run genera:
 ## Ejemplo de ejecución
 
 ```bash
-python test_main.py --image inputs/flags/fr.png --selection-method tournament_deterministic --crossover-method uniform --mutation-method multigen --replacement-method additive --init-method guided
+sh scripts/run_all.sh
 ```
 
 ---
